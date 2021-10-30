@@ -1,0 +1,227 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	E:\Kulieh\utsSismik\codesimulasiUTSsahal.asm
+	Object File:	E:\Kulieh\utsSismik\codesimulasiUTSsahal.hex
+	List File:	E:\Kulieh\utsSismik\codesimulasiUTSsahal.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:				;===Koneksi LCD RS=p3.2, E=p3.3, Data=P1====
+    2:
+    3:		N      0000	ORG 000H
+    4:	  0000	21 00		AJMP START
+    5:
+    6:				;=======LCD KONSTANTA======
+    7:		N      0001	DISPCLR EQU 00000001B
+    8:		N      0038	FUNCSET EQU 00111000B
+    9:		N      0006	ENTRMOD EQU 00000110B
+   10:		N      000C	DISPON EQU 00001100B
+   11:
+   12:		N      0100	ORG 100H
+   13:	  0100			START:
+   14:	  0100	12 01 24	LCALL INITLCD
+   15:
+   16:	  0103	74 80		MOV A,#80H
+   17:	  0105	12 01 10	CALL INSTLCD
+   18:	  0108	90 01 60	MOV DPTR,#TULISAN1
+   19:	  010B	12 01 52	CALL LCDSTRING
+   20:
+   21:	  010E	21 0E		LOOP: AJMP LOOP
+   22:				;=======PROSEDUR KONTROL DATA OPERASI========
+   23:	  0110			INSTLCD:
+   24:	  0110	C2 B2		CLR P3.2 ;RS=0 fo LCD instr
+   25:	  0112	80 04		SJMP LCDOUT
+   26:	  0114	D2 B2		DATALCD:SETB P3.2 ;RS=1 fo LCD data ASCII
+   27:	  0116	80 00		SJMP LCDOUT
+   28:	  0118	F5 90		LCDOUT: MOV P1,A ;send ASCII/instr to LCD
+   29:	  011A	D2 B3		SETB P3.3 ;send pulse enab to LCD
+   30:	  011C	C2 B3		CLR P3.3
+   31:	  011E	D2 B3		SETB P3.3
+   32:	  0120	12 01 57	LCALL DELAY
+   33:	  0123	22		RET
+   34:
+   35:				;=======PROSEDUR INISIALISASI LCD=============
+   36:	  0124			INITLCD:
+   37:	  0124	74 01		MOV A,#DISPCLR
+   38:	  0126	12 01 10	LCALL INSTLCD
+   39:	  0129	12 01 57	LCALL DELAY
+   40:	  012C	74 38		MOV A,#FUNCSET
+   41:	  012E	12 01 10	LCALL INSTLCD
+   42:	  0131	12 01 57	LCALL DELAY
+   43:	  0134	74 0C		MOV A,#DISPON
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:	  0136	12 01 10	LCALL INSTLCD
+   45:	  0139	12 01 57	LCALL DELAY
+   46:	  013C	74 06		MOV A,#ENTRMOD
+   47:	  013E	12 01 10	LCALL INSTLCD
+   48:	  0141	12 01 57	LCALL DELAY
+   49:	  0144	22		RET
+   50:
+   51:				;=======PROSEDUR PENULISAN DATA KE LCD
+   52:	  0145			WR_DT:
+   53:	  0145	24 30		ADD A,#30H
+   54:	  0147	12 01 14	LCALL DATALCD
+   55:	  014A	12 01 57	LCALL DELAY
+   56:	  014D	22		RET
+   57:				;=======PROSEDUR CETAK STRING=========
+   58:	  014E			PRINTSTRINGLOOP:
+   59:	  014E	12 01 14	LCALL DATALCD
+   60:	  0151	A3		INC DPTR
+   61:	  0152			LCDSTRING:
+   62:	  0152	E4		CLR A
+   63:	  0153	93		MOVC A,@A+DPTR
+   64:	  0154	70 F8		JNZ PRINTSTRINGLOOP
+   65:	  0156	22		RET
+   66:
+   67:				;=======PROSEDUR DELAY=========
+   68:	  0157			DELAY:
+   69:	  0157	7E 96		MOV R6,#150
+   70:	  0159			MUTER:
+   71:	  0159	7F FA		MOV R7,#250
+   72:	  015B	DF FE		DJNZ R7,$
+   73:	  015D	DE FA		DJNZ R6,MUTER
+   74:	  015F	22		RET
+   75:
+   76:				;=======DATABASE STRING=======
+   77:	  0160			TULISAN1:
+   78:	  0160	74 75 67 61	DB 'tugas UTS ',0
+	  0164	73 20 55 54
+	  0168	53 20 00
+   79:
+   80:				END
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+B				  DATA	      F0
+CY				  BIT	      D7
+DATALCD				  CODE	    0114	  26
+DELAY				  CODE	    0157	  68
+DISPCLR				  NUMBER    0001	   7
+DISPON				  NUMBER    000C	  10
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+ENTRMOD				  NUMBER    0006	   9
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+F0				  BIT	      D5
+FUNCSET				  NUMBER    0038	   8
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INITLCD				  CODE	    0124	  36
+INSTLCD				  CODE	    0110	  23
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+LCDOUT				  CODE	    0118	  28
+LCDSTRING			  CODE	    0152	  61
+LOOP				  CODE	    010E	  21
+MUTER				  CODE	    0159	  70
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PCON				  DATA	      87
+PRINTSTRINGLOOP			  CODE	    014E	  58
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+PX1				  BIT	      BA
+RB8				  BIT	      9A
+RD				  BIT	      B7
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCON				  DATA	      98
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SP				  DATA	      81
+START				  CODE	    0100	  13
+T0				  BIT	      B4
+T1				  BIT	      B5
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+TI				  BIT	      99
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TULISAN1			  CODE	    0160	  77
+TXD				  BIT	      B1
+WR				  BIT	      B6
+WR_DT				  CODE	    0145	  52
